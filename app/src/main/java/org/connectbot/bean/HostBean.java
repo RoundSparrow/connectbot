@@ -221,6 +221,8 @@ public class HostBean extends AbstractBean {
 		values.put(HostDatabase.FIELD_HOST_USEAUTHAGENT, useAuthAgent);
 		values.put(HostDatabase.FIELD_HOST_POSTLOGIN, postLogin);
 		values.put(HostDatabase.FIELD_HOST_PUBKEYID, pubkeyId);
+		values.put(HostDatabase.FIELD_HOST_PLAINTEXT_PASSWORD, plainTextPassphrase);
+		values.put(HostDatabase.FIELD_HOST_ANDROIDBOOT_CONNECT, bootBehaviorSetting);
 		values.put(HostDatabase.FIELD_HOST_WANTSESSION, Boolean.toString(wantSession));
 		values.put(HostDatabase.FIELD_HOST_DELKEY, delKey);
 		values.put(HostDatabase.FIELD_HOST_FONTSIZE, fontSize);
@@ -245,6 +247,8 @@ public class HostBean extends AbstractBean {
 		host.setUseAuthAgent(values.getAsString(HostDatabase.FIELD_HOST_USEAUTHAGENT));
 		host.setPostLogin(values.getAsString(HostDatabase.FIELD_HOST_POSTLOGIN));
 		host.setPubkeyId(values.getAsLong(HostDatabase.FIELD_HOST_PUBKEYID));
+		host.setPassphrase(values.getAsString(HostDatabase.FIELD_HOST_PLAINTEXT_PASSWORD));
+		host.setAndroidBootupAutoConnectBehavior(values.getAsInteger(HostDatabase.FIELD_HOST_ANDROIDBOOT_CONNECT));
 		host.setWantSession(Boolean.valueOf(values.getAsString(HostDatabase.FIELD_HOST_WANTSESSION)));
 		host.setDelKey(values.getAsString(HostDatabase.FIELD_HOST_DELKEY));
 		host.setFontSize(values.getAsInteger(HostDatabase.FIELD_HOST_FONTSIZE));
@@ -365,4 +369,30 @@ public class HostBean extends AbstractBean {
 		return "";
 	}
 
+
+	private String plainTextPassphrase = null;
+	private int bootBehaviorSetting = 0;
+
+	/*
+	ToDo: save in Android device secure storage, not App's normal storage.
+	   Reference: http://www.androidauthority.com/use-android-keystore-store-passwords-sensitive-information-623779/
+	 */
+	public void setPassphrase(String passphrase) {
+		plainTextPassphrase = passphrase;
+	}
+
+	public String getPasshprase() {
+		return plainTextPassphrase;
+	}
+
+
+	public void setAndroidBootupAutoConnectBehavior(int bootSetting) {
+		bootBehaviorSetting = bootSetting;
+		if (bootSetting > 1)
+			throw new RuntimeException("Who_SENT_IN_WHAT_BOOT");
+	}
+
+	public int getAndroidBootupAutoConnectBehavior() {
+		return bootBehaviorSetting;
+	}
 }

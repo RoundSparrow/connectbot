@@ -640,4 +640,9 @@
 	<string name="discard_host_button">Discard</string>
 	<!-- Text for button which does not discard changes and keeps editing. -->
 	<string name="discard_host_cancel_button">Keep editing</string>
+
+	<!-- CameraCornet grafted experiments -->
+	<string name="myPopulate0">Populate0</string>
+	<string name="hostpref_bootconnect_title">Boot Connect</string>
+	<string name="hostpref_bootconnect_summary">When this Android device boots, automatically start connecting</string>
 </resources>

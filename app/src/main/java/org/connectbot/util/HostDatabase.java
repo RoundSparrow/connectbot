@@ -66,6 +66,8 @@ public class HostDatabase extends RobustSQLiteOpenHelper implements HostStorage,
 	public final static String FIELD_HOST_USEAUTHAGENT = "useauthagent";
 	public final static String FIELD_HOST_POSTLOGIN = "postlogin";
 	public final static String FIELD_HOST_PUBKEYID = "pubkeyid";
+	public final static String FIELD_HOST_PLAINTEXT_PASSWORD = "plaintextpwd";
+	public final static String FIELD_HOST_ANDROIDBOOT_CONNECT = "bootconnect";
 	public final static String FIELD_HOST_WANTSESSION = "wantsession";
 	public final static String FIELD_HOST_DELKEY = "delkey";
 	public final static String FIELD_HOST_FONTSIZE = "fontsize";
@@ -136,6 +138,8 @@ public class HostDatabase extends RobustSQLiteOpenHelper implements HostStorage,
 			+ FIELD_HOST_USEAUTHAGENT + " TEXT, "
 			+ FIELD_HOST_POSTLOGIN + " TEXT, "
 			+ FIELD_HOST_PUBKEYID + " INTEGER DEFAULT " + PUBKEYID_ANY + ", "
+			+ FIELD_HOST_PLAINTEXT_PASSWORD + " TEXT, "
+			+ FIELD_HOST_ANDROIDBOOT_CONNECT + " INTEGER DEFAULT 0, "
 			+ FIELD_HOST_DELKEY + " TEXT DEFAULT '" + DELKEY_DEL + "', "
 			+ FIELD_HOST_FONTSIZE + " INTEGER, "
 			+ FIELD_HOST_WANTSESSION + " TEXT DEFAULT '" + Boolean.toString(true) + "', "
@@ -281,6 +285,8 @@ public class HostDatabase extends RobustSQLiteOpenHelper implements HostStorage,
 			return;
 		}
 
+// ToDo: upgrade the new FIELD_HOST_PLAINTEXT_PASSWORD
+
 		switch (oldVersion) {
 		case 10:
 			db.execSQL("ALTER TABLE " + TABLE_HOSTS
@@ -371,6 +377,8 @@ public class HostDatabase extends RobustSQLiteOpenHelper implements HostStorage,
 					+ FIELD_HOST_USEAUTHAGENT + ", "
 					+ FIELD_HOST_POSTLOGIN + ", "
 					+ FIELD_HOST_PUBKEYID + ", "
+					// + FIELD_HOST_PLAINTEXT_PASSWORD + ", "
+					// + FIELD_HOST_ANDROIDBOOT_CONNECT + ", "
 					+ FIELD_HOST_DELKEY + ", "
 					+ FIELD_HOST_FONTSIZE + ", "
 					+ FIELD_HOST_WANTSESSION + ", "
@@ -480,6 +488,8 @@ public class HostDatabase extends RobustSQLiteOpenHelper implements HostStorage,
 			COL_USEAUTHAGENT = c.getColumnIndexOrThrow(FIELD_HOST_USEAUTHAGENT),
 			COL_POSTLOGIN = c.getColumnIndexOrThrow(FIELD_HOST_POSTLOGIN),
 			COL_PUBKEYID = c.getColumnIndexOrThrow(FIELD_HOST_PUBKEYID),
+			COL_PLAINTEXTPWD = c.getColumnIndexOrThrow(FIELD_HOST_PLAINTEXT_PASSWORD),
+			COL_BOOTCONNECT = c.getColumnIndexOrThrow(FIELD_HOST_ANDROIDBOOT_CONNECT),
 			COL_WANTSESSION = c.getColumnIndexOrThrow(FIELD_HOST_WANTSESSION),
 			COL_DELKEY = c.getColumnIndexOrThrow(FIELD_HOST_DELKEY),
 			COL_FONTSIZE = c.getColumnIndexOrThrow(FIELD_HOST_FONTSIZE),
@@ -503,6 +513,8 @@ public class HostDatabase extends RobustSQLiteOpenHelper implements HostStorage,
 			host.setUseAuthAgent(c.getString(COL_USEAUTHAGENT));
 			host.setPostLogin(c.getString(COL_POSTLOGIN));
 			host.setPubkeyId(c.getLong(COL_PUBKEYID));
+			host.setPassphrase(c.getString(COL_PLAINTEXTPWD));
+			host.setAndroidBootupAutoConnectBehavior(c.getInt(COL_BOOTCONNECT));
 			host.setWantSession(Boolean.valueOf(c.getString(COL_WANTSESSION)));
 			host.setDelKey(c.getString(COL_DELKEY));
 			host.setFontSize(c.getInt(COL_FONTSIZE));

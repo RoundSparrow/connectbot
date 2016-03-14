@@ -151,6 +151,7 @@ public class EditHostActivity extends AppCompatActivity implements HostEditorFra
 				attemptSaveAndExit();
 				return true;
 			default:
+				com.cameracornet.graftssh.UserInterfaceActivity.graftEditHostActivityMenu(item, this);
 				return super.onOptionsItemSelected(item);
 		}
 	}

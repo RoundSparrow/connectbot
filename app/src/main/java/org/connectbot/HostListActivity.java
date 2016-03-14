@@ -49,7 +49,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.connectbot.bean.HostBean;
-import org.connectbot.data.HostStorage;
 import org.connectbot.service.OnHostStatusChangedListener;
 import org.connectbot.service.TerminalBridge;
 import org.connectbot.service.TerminalManager;
@@ -67,7 +66,8 @@ public class HostListActivity extends AppCompatListActivity implements OnHostSta
 
 	protected TerminalManager bound = null;
 
-	private HostStorage hostdb;
+	// ToDo: open Bug with the project, why isn't hostdb HostDatabase project and only HostStorage?
+	private HostDatabase hostdb;
 	private List<HostBean> hosts;
 	protected LayoutInflater inflater = null;
 
@@ -286,6 +286,8 @@ public class HostListActivity extends AppCompatListActivity implements OnHostSta
 			}
 		});
 
+		com.cameracornet.graftssh.UserInterfaceActivity.graftHostListActiityMenuAddA(menu, hostdb, this);
+
 		MenuItem settings = menu.add(R.string.list_menu_settings);
 		settings.setIcon(android.R.drawable.ic_menu_preferences);
 		settings.setIntent(new Intent(HostListActivity.this, SettingsActivity.class));
@@ -293,6 +295,7 @@ public class HostListActivity extends AppCompatListActivity implements OnHostSta
 		MenuItem help = menu.add(R.string.title_help);
 		help.setIcon(android.R.drawable.ic_menu_help);
 		help.setIntent(new Intent(HostListActivity.this, HelpActivity.class));
+
 
 		return true;
 
@@ -353,7 +356,7 @@ public class HostListActivity extends AppCompatListActivity implements OnHostSta
 		return true;
 	}
 
-	protected void updateList() {
+	public void updateList() {
 		if (prefs.getBoolean(PreferenceConstants.SORT_BY_COLOR, false) != sortedByColor) {
 			Editor edit = prefs.edit();
 			edit.putBoolean(PreferenceConstants.SORT_BY_COLOR, sortedByColor);

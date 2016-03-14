@@ -521,6 +521,8 @@ public class HostEditorFragment extends Fragment {
 			}
 		});
 
+		com.cameracornet.graftssh.UserInterfaceActivity.graftHostEditorFragmentMenuItems(view, this, mHost);
+
 		mCloseOnDisconnectItem = view.findViewById(R.id.close_on_disconnect_item);
 		mCloseOnDisconnectItem.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -736,7 +738,7 @@ public class HostEditorFragment extends Fragment {
 	 * to the listener; however, if the change ha resulted in an invalid host, the listener is
 	 * notified.
 	 */
-	private void handleHostChange() {
+	public void handleHostChange() {
 		String quickConnectString = mQuickConnectField.getText().toString();
 		if (quickConnectString == null || quickConnectString.equals("")) {
 			// Invalid protocol and/or string, so don't do anything.
@@ -792,6 +794,7 @@ public class HostEditorFragment extends Fragment {
 				mHost.setNickname(text);
 			} else if (HostDatabase.FIELD_HOST_POSTLOGIN.equals(mFieldType)) {
 				mHost.setPostLogin(text);
+
 			} else if (HostDatabase.FIELD_HOST_FONTSIZE.equals(mFieldType)) {
 				int fontSize = HostBean.DEFAULT_FONT_SIZE;
 				try {
@@ -801,7 +804,9 @@ public class HostEditorFragment extends Fragment {
 					setFontSize(fontSize);
 				}
 			} else {
-				throw new RuntimeException("Invalid field type.");
+				if (! com.cameracornet.graftssh.UserInterfaceActivity.graftHostEditorFragmentHostDatabaseA(mFieldType, mHost, text)) {
+					throw new RuntimeException("Invalid field type.");
+				}
 			}
 
 			if (isUriRelatedField(mFieldType)) {

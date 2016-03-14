@@ -605,6 +605,51 @@
 		</RelativeLayout>
 
 		<RelativeLayout
+			android:id="@+id/boot_connect_item"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			>
+
+			<ImageView
+				android:layout_width="24dp"
+				android:layout_height="24dp"
+				android:src="@drawable/ic_sync"
+				android:contentDescription="@string/hostpref_bootconnect_title"
+				style="@style/ListItemIcon"
+				/>
+
+			<TextView
+				android:id="@+id/boot_connect_title"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/hostpref_bootconnect_title"
+				style="@style/ListItemFirstLineText.WithIcon"
+				/>
+
+			<android.support.v7.widget.SwitchCompat
+				android:id="@+id/boot_connect_switch"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentRight="true"
+				android:layout_alignParentEnd="true"
+				android:layout_marginRight="16dp"
+				android:layout_marginEnd="16dp"
+				android:layout_centerVertical="true"
+				/>
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/hostpref_bootconnect_summary"
+				android:layout_toLeftOf="@id/boot_connect_switch"
+				android:layout_toStartOf="@id/boot_connect_switch"
+				android:layout_below="@id/boot_connect_title"
+				style="@style/ListItemSecondLineText.WithIcon"
+				/>
+
+		</RelativeLayout>
+
+		<RelativeLayout
 			android:id="@+id/close_on_disconnect_item"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
