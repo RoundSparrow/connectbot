@@ -381,7 +381,7 @@ public class HostBean extends AbstractBean {
 		plainTextPassphrase = passphrase;
 	}
 
-	public String getPasshprase() {
+	public String getPlainTextPassword() {
 		return plainTextPassphrase;
 	}
 

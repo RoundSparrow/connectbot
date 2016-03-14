@@ -577,6 +577,12 @@ public class TerminalView extends FrameLayout implements FontSizeChangedListener
 		public void run() {
 			synchronized (mAccessibilityLock) {
 				if (mCodeMatcher == null) {
+					if (mControlCodes == null)
+					{
+						// This code path got hit when a PortForward failed due to an address in use? to duplciate, forward same port twice?
+						android.util.Log.e("TerminalView", "Too much NULL - SPOT_A0000B");
+						return;
+					}
 					mCodeMatcher = mControlCodes.matcher(mAccessibilityBuffer);
 				} else {
 					mCodeMatcher.reset(mAccessibilityBuffer);

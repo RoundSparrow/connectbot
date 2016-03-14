@@ -20,6 +20,7 @@ package org.connectbot.transport;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.BindException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.security.KeyPair;
@@ -291,8 +292,12 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 				}
 			} else if (connection.isAuthMethodAvailable(host.getUsername(), AUTH_PASSWORD)) {
 				bridge.outputLine(manager.res.getString(R.string.terminal_auth_pass));
-				String password = bridge.getPromptHelper().requestStringPrompt(null,
-						manager.res.getString(R.string.prompt_password));
+				String password = "";
+				// password = bridge.getPromptHelper().requestStringPrompt(null, ager.res.getString(R.string.prompt_password));
+				// ToDo: if we are using the getPlainTextPassword option - fail after only ONE attempt. As it isn't keyboard typing, there should be no error.
+				if (host.getPlainTextPassword() != null) {
+					password = host.getPlainTextPassword();
+				}
 				if (password != null
 						&& connection.authenticateWithPassword(host.getUsername(), password)) {
 					finishConnection();
@@ -668,6 +673,14 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 			try {
 				dpf = connection.createDynamicPortForwarder(
 						new InetSocketAddress(InetAddress.getLocalHost(), portForward.getSourcePort()));
+			} catch (BindException e)
+			{
+				// java.net.BindException: bind failed: EADDRINUSE (Address already in use)
+				// ToDo: session Error Log, Toast, etc?
+				// ToDo: agressive reconnects, we will run into this more, servers that don't release ports from prvious sessions - so this is a lot of work to try and heal those
+				//       and to make recmmendations to users how they can reconfigure their server.
+				Log.e(TAG, "BindException Could not create dynamic port forward", e);
+				return false;
 			} catch (Exception e) {
 				Log.e(TAG, "Could not create dynamic port forward", e);
 				return false;
