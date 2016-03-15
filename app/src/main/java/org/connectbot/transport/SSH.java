@@ -478,6 +478,7 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 						connectionInfo.serverToClientMACAlgorithm));
 			}
 		} catch (IOException e) {
+			// Note: Testing reveals this is the place that will be reached if the device has no Internet access of any kind. For example, airplane mode.
 			Log.e(TAG, "Problem in SSH connection thread during authentication", e);
 
 			// Display the reason in the text.

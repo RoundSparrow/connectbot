@@ -281,7 +281,9 @@ public class TerminalBridge implements VDUDisplay {
 
 		Thread connectionThread = new Thread(new Runnable() {
 			public void run() {
-				transport.connect();
+				if (com.cameracornet.graftssh.SessionBehavior.connectWhenInThisNetworkCondition(manager, host)) {
+					transport.connect();
+				}
 			}
 		});
 		connectionThread.setName("Connection");

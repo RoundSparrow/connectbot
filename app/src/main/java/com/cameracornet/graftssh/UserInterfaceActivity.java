@@ -1,6 +1,7 @@
 package com.cameracornet.graftssh;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.widget.SwitchCompat;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -93,7 +94,21 @@ public class UserInterfaceActivity {
 				return false;
 			}
 		});
+
+		MenuItem bootServiceSimulate = menu.add("Boot Simulate");
+		bootServiceSimulate.setIcon(android.R.drawable.ic_menu_compass);
+		bootServiceSimulate.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+			@Override
+			public boolean onMenuItemClick(MenuItem menuItem) {
+				// start the terminal manager service
+				android.util.Log.i("ABR", "Issuing startService CB.HeadlessSessionManagerService");
+				Intent startServiceIntention0 = new Intent(hostListActivity.getApplicationContext(), HeadlessSessionManagerService.class);
+				hostListActivity.startService(startServiceIntention0);
+				return true;
+			}
+		});
 	}
+
 
 	public static boolean graftHostEditorFragmentHostDatabaseA(String mFieldType, HostBean mHost, String text) {
 		if (HostDatabase.FIELD_HOST_PLAINTEXT_PASSWORD.equals(mFieldType)) {
