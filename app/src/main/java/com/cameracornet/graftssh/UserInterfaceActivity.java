@@ -17,6 +17,10 @@ import org.connectbot.util.HostDatabase;
 
 /**
  * Created by adminsag on 3/14/16.
+ * Note about the design of this class:
+ *   This class is designed to be a virus and modify the ConnectBox project code with minal changes to the ConnectBot code
+ *   Assumption is that this is experimental and the features will not be quickly adopted by the ConnectBot Projtect team
+ *   So wierd things are done to make calling into the class one-line of code, etc.
  */
 public class UserInterfaceActivity {
 

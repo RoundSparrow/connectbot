@@ -101,7 +101,8 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 		AUTH_PASSWORD = "password",
 		AUTH_KEYBOARDINTERACTIVE = "keyboard-interactive";
 
-	private final static int AUTH_TRIES = 20;
+	private final static int AUTH_TRIES = 10;
+	private final static long AUTH_RETRY_DELAY = 1500L;
 
 	static final Pattern hostmask;
 	static {
@@ -394,8 +395,11 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 	private void finishConnection() {
 		authenticated = true;
 
+		int forwardCount = 0;
 		for (PortForwardBean portForward : portForwards) {
+			forwardCount++;
 			try {
+				Log.i(TAG, "creating portForward #" + forwardCount + ": " + portForward.getDescription());
 				enablePortForward(portForward);
 				bridge.outputLine(manager.res.getString(R.string.terminal_enable_portfoward, portForward.getDescription()));
 			} catch (Exception e) {
@@ -497,10 +501,11 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 			// enter a loop to keep trying until authentication
 			int tries = 0;
 			while (connected && !connection.isAuthenticationComplete() && tries++ < AUTH_TRIES) {
+				Log.i(TAG, "authenticate try " + tries);
 				authenticate();
 
 				// sleep to make sure we dont kill system
-				Thread.sleep(1000);
+				Thread.sleep(AUTH_RETRY_DELAY);
 			}
 		} catch (Exception e) {
 			Log.e(TAG, "Problem in SSH connection thread during authentication", e);
@@ -672,6 +677,7 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 			DynamicPortForwarder dpf = null;
 
 			try {
+				Log.d(TAG, "DynamicPortForwarder " + InetAddress.getLocalHost() + ":" + portForward.getSourcePort());
 				dpf = connection.createDynamicPortForwarder(
 						new InetSocketAddress(InetAddress.getLocalHost(), portForward.getSourcePort()));
 			} catch (BindException e)

@@ -261,7 +261,7 @@ public class TerminalBridge implements VDUDisplay {
 	/**
 	 * Spawn thread to open connection and start login process.
 	 */
-	protected void startConnection() {
+	protected boolean startConnection() {
 		transport = TransportFactory.getTransport(host.getProtocol());
 		transport.setBridge(this);
 		transport.setManager(manager);
@@ -277,18 +277,33 @@ public class TerminalBridge implements VDUDisplay {
 				transport.addPortForward(portForward);
 		}
 
-		outputLine(manager.res.getString(R.string.terminal_connecting, host.getHostname(), host.getPort(), host.getProtocol()));
+		// Design is to not even start the thread (which takes only 100ms or less) if the Internet isn't available
+		switch (com.cameracornet.graftssh.SessionBehavior.connectWhenInThisNetworkCondition(manager, host))
+		{
+			case 0:
+				outputLine(manager.res.getString(R.string.terminal_connecting, host.getHostname(), host.getPort(), host.getProtocol()));
+				Thread connectionThread = new Thread(new Runnable() {
+					public void run() {
+						android.util.Log.i(TAG, "connecting " + host.getHostname() + " on " + Thread.currentThread().toString());
+						transport.connect();
+					}
+				});
 
-		Thread connectionThread = new Thread(new Runnable() {
-			public void run() {
-				if (com.cameracornet.graftssh.SessionBehavior.connectWhenInThisNetworkCondition(manager, host)) {
-					transport.connect();
-				}
-			}
-		});
-		connectionThread.setName("Connection");
-		connectionThread.setDaemon(true);
-		connectionThread.start();
+				connectionThread.setName("Connection");
+				connectionThread.setDaemon(true);
+				connectionThread.start();
+				return true;
+			case 1:
+				// do nothing, just fail
+				// ToDo: toast?
+				return false;
+			case 2:
+				// Go immediately go into reconnect behavior
+				disconnectListener.onDisconnected(this);
+				return false;
+			default:
+				return false;
+		}
 	}
 
 	/**
@@ -933,7 +948,7 @@ public class TerminalBridge implements VDUDisplay {
 	 */
 	public boolean enablePortForward(PortForwardBean portForward) {
 		if (!transport.isConnected()) {
-			Log.i(TAG, "Attempt to enable port forward while not connected");
+			Log.i(TAG, "Attempt to enable port forward while not connected " + portForward.toXML());
 			return false;
 		}
 

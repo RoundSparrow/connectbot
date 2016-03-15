@@ -84,6 +84,7 @@ public class HostListActivity extends AppCompatListActivity implements OnHostSta
 	protected boolean makingShortcut = false;
 
 	private boolean waitingForDisconnectAll = false;
+	private int setAdapterCalledCount = 0;
 
 	/**
 	 * Whether to close the activity when disconnectAll is called. True if this activity was
@@ -377,7 +378,17 @@ public class HostListActivity extends AppCompatListActivity implements OnHostSta
 		}
 
 		mAdapter = new HostAdapter(this, hosts, bound);
-		mListView.setAdapter(mAdapter);
+		try {
+			// App crash: java.lang.IllegalStateException: Observer android.support.v7.widget.RecyclerView$RecyclerViewDataObserver@41c5a480 was not registered.
+			// Using thread other than Main UI thread has been known cause of this specific error
+			setAdapterCalledCount++;
+			Log.i(TAG, "calling setAdapter count: " + setAdapterCalledCount + " " + Thread.currentThread());
+			mListView.setAdapter(mAdapter);
+		}
+		catch (IllegalStateException e)
+		{
+			Log.e(TAG, "ListView setAdapter hosts IllegalStateException " + Thread.currentThread(), e);
+		}
 		adjustViewVisibility();
 	}
 
