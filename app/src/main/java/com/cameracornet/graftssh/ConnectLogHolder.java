@@ -12,7 +12,15 @@ public class ConnectLogHolder {
 	public static final String TAG = "CB.LogHolder";
 
 	public static void addConnectLogEntry(int logCode, HostBean host, int reconnectAttemptCount) {
-		LogKeeper.addLogEntry("Connect", logCode + ", " + reconnectAttemptCount + ", " + "host " + hostSummaryA(host), LogKeeper.L_A_NORMAL, LogKeeper.L_B_NORMAL);
+		switch (logCode)
+		{
+			case 40:
+				LogKeeper.addLogEntry("Connect", "SKIP_NET" + ", " + reconnectAttemptCount + ", " + "host " + hostSummaryA(host), LogKeeper.L_A_HIGH, LogKeeper.L_B_NORMAL);
+				break;
+			default:
+				LogKeeper.addLogEntry("Connect", logCode + ", " + reconnectAttemptCount + ", " + "host " + hostSummaryA(host), LogKeeper.L_A_NORMAL, LogKeeper.L_B_NORMAL);
+				break;
+		}
 		Log.d(TAG, "log entry added code " + logCode);
 	}
 

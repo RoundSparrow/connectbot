@@ -714,7 +714,7 @@ public class TerminalManager extends Service implements BridgeDisconnectedListen
 			mPendingReconnect.add(new WeakReference<TerminalBridge>(bridge));
 			if (!bridge.isUsingNetwork() ||
 					connectivityManager.isConnected()) {
-				com.cameracornet.graftssh.ConnectLogHolder.addConnectLogEntry(200, bridge.host, reconnectAttemptCount);
+				com.cameracornet.graftssh.ConnectLogHolder.addConnectLogEntry(30, bridge.host, reconnectAttemptCount);
 				reconnectPending();
 			}
 		}
@@ -738,7 +738,7 @@ public class TerminalManager extends Service implements BridgeDisconnectedListen
 				// ToDo: does this actually check that a previous attempt has timed out, finished - inProgress()? or does it count on just the clear() removing it from list?
 				Log.i(TAG, "TerminalManager reconnectPending calling startConnection " + Thread.currentThread() + " attempt: " + reconnectAttemptCount);
 				com.cameracornet.graftssh.ConnectLogHolder.addConnectLogEntry(20, bridge.host, reconnectAttemptCount);
-				bridge.EnstartConnection();
+				bridge.startConnection();
 			}
 			// removing it from the list, what if it fails? Litearlly only one attempt?
 			// So Far, testing reveals it DOES stop attempting after connect. And retries are 4.7 seconds apart

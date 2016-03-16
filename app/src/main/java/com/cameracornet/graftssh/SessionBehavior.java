@@ -15,6 +15,7 @@ public class SessionBehavior {
 	public static int connectWhenInThisNetworkCondition(Context context, HostBean host) {
 		boolean anyPathToInternet = hasInternetConnection(context);
 		if (! anyPathToInternet) {
+			com.cameracornet.graftssh.ConnectLogHolder.addConnectLogEntry(40, host, -1);
 			android.util.Log.w(TAG, "network unavailable being told before connect, Host " + host.toXML());
 			return 2;
 		}
