@@ -124,4 +124,20 @@ public class UserInterfaceActivity {
 		}
 		return true;
 	}
+
+
+	public static boolean graftConsoleActivityMenuAddA(Menu menu, final HostDatabase hostdb)
+	{
+		MenuItem sessionLog = menu.add("Connect Log");
+		sessionLog.setIcon(android.R.drawable.ic_menu_compass);
+		sessionLog.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+			@Override
+			public boolean onMenuItemClick(MenuItem menuItem) {
+				// start the terminal manager service
+			}
+		});
+
+
+		return true;
+	}
 }
