@@ -161,7 +161,8 @@ public class ConsoleActivity extends AppCompatActivity implements BridgeDisconne
 			// If we didn't find the requested connection, try opening it
 			if (requestedNickname != null && requestedBridge == null) {
 				try {
-					Log.d(TAG, String.format("We couldnt find an existing bridge with URI=%s (nickname=%s), so creating one now", requested.toString(), requestedNickname));
+					Log.d(TAG, String.format("We couldn't find an existing bridge with URI=%s (nickname=%s), so creating one now", requested.toString(), requestedNickname));
+					Log.d(TAG, "TerminalBridge openConnection being called SPOT_Y1000 " + Thread.currentThread());
 					requestedBridge = bound.openConnection(requested);
 				} catch (Exception e) {
 					Log.e(TAG, "Problem while trying to create new requested bridge from URI", e);
@@ -900,6 +901,8 @@ public class ConsoleActivity extends AppCompatActivity implements BridgeDisconne
 			}
 		});
 
+		// com.cameracornet.graftssh.UserInterfaceActivity.graftConsoleActivityMenuAddA(menu, );
+
 		return true;
 	}
 
@@ -1027,8 +1030,9 @@ public class ConsoleActivity extends AppCompatActivity implements BridgeDisconne
 				// If we didn't find the requested connection, try opening it
 
 				try {
-					Log.d(TAG, String.format("We couldnt find an existing bridge with URI=%s (nickname=%s)," +
+					Log.d(TAG, String.format("We couldn't find an existing bridge with URI=%s (nickname=%s)," +
 							"so creating one now", requested.toString(), requested.getFragment()));
+					Log.d(TAG, "TerminalBridge openConnection being called, SPOT_Y0000 " + Thread.currentThread());
 					requestedBridge = bound.openConnection(requested);
 				} catch (Exception e) {
 					Log.e(TAG, "Problem while trying to create new requested bridge from URI", e);

@@ -226,6 +226,7 @@ public class TerminalManager extends Service implements BridgeDisconnectedListen
 
 		TerminalBridge bridge = new TerminalBridge(this, host);
 		bridge.setOnDisconnectedListener(this);
+		Log.i(TAG, "TerminalBridge startConnection being called " + Thread.currentThread());
 		bridge.startConnection();
 
 		synchronized (bridges) {
@@ -273,6 +274,7 @@ public class TerminalManager extends Service implements BridgeDisconnectedListen
 	 * format specified by an individual transport.
 	 */
 	public TerminalBridge openConnection(Uri uri) throws Exception {
+		Log.i(TAG, "TerminalBridge openConnection called " + Thread.currentThread());
 		HostBean host = TransportFactory.findHost(hostdb, uri);
 
 		if (host == null)
@@ -327,9 +329,12 @@ public class TerminalManager extends Service implements BridgeDisconnectedListen
 	 */
 	public void onDisconnected(TerminalBridge bridge) {
 		boolean shouldHideRunningNotification = false;
-		Log.d(TAG, "Bridge Disconnected. Removing it.");
+		Log.d(TAG, "Bridge Disconnected. Removing it. " + Thread.currentThread());
 
 		synchronized (bridges) {
+			// bridge.addPortForward()
+			// bridge.removePortForward(portForward);
+
 			// remove this bridge from our list
 			bridges.remove(bridge);
 
@@ -340,25 +345,37 @@ public class TerminalManager extends Service implements BridgeDisconnectedListen
 				connectivityManager.decRef();
 			}
 
+			Log.d(TAG, "Bridge Disconnected. Removing it. CHECKPOINT_A");
+
 			if (bridges.size() == 0 &&
 					mPendingReconnect.size() == 0) {
 				shouldHideRunningNotification = true;
 			}
 
+			Log.d(TAG, "Bridge Disconnected. Removing it. CHECKPOINT_B " + Thread.currentThread());
+
 			// pass notification back up to gui
 			if (disconnectListener != null)
 				disconnectListener.onDisconnected(bridge);
+
+			Log.d(TAG, "Bridge Disconnected. Removing it. CHECKPOINT_C");
 		}
 
+		Log.d(TAG, "Bridge Disconnected. After remove. CHECKPOINT_D");
 		synchronized (disconnected) {
 			disconnected.add(bridge.host);
 		}
 
+		Log.d(TAG, "Bridge Disconnected. After remove. CHECKPOINT_E");
+		// Turning off the WiFi on the device, this is the last checkpoint message we see in log
 		notifyHostStatusChanged();
+
+		Log.d(TAG, "Bridge Disconnected. After remove. CHECKPOINT_F");
 
 		if (shouldHideRunningNotification) {
 			ConnectionNotifier.getInstance().hideRunningNotification(this);
 		}
+		Log.i(TAG, "onDisconnected end");
 	}
 
 	public boolean isKeyLoaded(String nickname) {
@@ -706,12 +723,14 @@ public class TerminalManager extends Service implements BridgeDisconnectedListen
 	 * was lost.
 	 */
 	private void reconnectPending() {
+		Log.i(TAG, "TerminalManager reconnectPending " + Thread.currentThread());
 		synchronized (mPendingReconnect) {
 			for (WeakReference<TerminalBridge> ref : mPendingReconnect) {
 				TerminalBridge bridge = ref.get();
 				if (bridge == null) {
 					continue;
 				}
+				Log.i(TAG, "TerminalManager reconnectPending calling startConnection " + Thread.currentThread());
 				bridge.startConnection();
 			}
 			mPendingReconnect.clear();
@@ -738,7 +757,9 @@ public class TerminalManager extends Service implements BridgeDisconnectedListen
 
 	private void notifyHostStatusChanged() {
 		for (OnHostStatusChangedListener listener : hostStatusChangedListeners) {
+			Log.d(TAG, "notifyHostStatusChanged doing loop A");
 			listener.onHostStatusChanged();
+			Log.d(TAG, "notifyHostStatusChanged doing loop B");
 		}
 	}
 }

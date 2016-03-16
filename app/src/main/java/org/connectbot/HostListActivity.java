@@ -287,7 +287,7 @@ public class HostListActivity extends AppCompatListActivity implements OnHostSta
 			}
 		});
 
-		com.cameracornet.graftssh.UserInterfaceActivity.graftHostListActiityMenuAddA(menu, hostdb, this);
+		com.cameracornet.graftssh.UserInterfaceActivity.graftHostListActivityMenuAddA(menu, hostdb, this);
 
 		MenuItem settings = menu.add(R.string.list_menu_settings);
 		settings.setIcon(android.R.drawable.ic_menu_preferences);
@@ -384,6 +384,7 @@ public class HostListActivity extends AppCompatListActivity implements OnHostSta
 			setAdapterCalledCount++;
 			Log.i(TAG, "calling setAdapter count: " + setAdapterCalledCount + " " + Thread.currentThread());
 			mListView.setAdapter(mAdapter);
+			Log.i(TAG, "after setAdapter count: " + setAdapterCalledCount + " " + Thread.currentThread());
 		}
 		catch (IllegalStateException e)
 		{
@@ -394,7 +395,15 @@ public class HostListActivity extends AppCompatListActivity implements OnHostSta
 
 	@Override
 	public void onHostStatusChanged() {
-		updateList();
+		Log.d(TAG, "onHostStatusChanged calling updateList " + Thread.currentThread());
+		mListView.post(new Runnable() {
+			@Override
+			public void run() {
+				updateList();
+				Log.d(TAG, "onHostStatusChanged after updateList SPOT_B " + Thread.currentThread());
+			}
+		});
+		Log.d(TAG, "onHostStatusChanged after updateList " + Thread.currentThread());
 	}
 
 	@VisibleForTesting

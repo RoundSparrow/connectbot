@@ -66,7 +66,7 @@ public class UserInterfaceActivity {
 	}
 
 
-	public static void graftHostListActiityMenuAddA(Menu menu, final HostDatabase hostdb, final HostListActivity hostListActivity) {
+	public static void graftHostListActivityMenuAddA(Menu menu, final HostDatabase hostdb, final HostListActivity hostListActivity) {
 		MenuItem populateA0 = menu.add("Populate_A0");
 		populateA0.setIcon(android.R.drawable.ic_menu_compass);
 		populateA0.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {

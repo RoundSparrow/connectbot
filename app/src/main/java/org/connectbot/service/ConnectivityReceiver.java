@@ -69,7 +69,7 @@ public class ConnectivityReceiver extends BroadcastReceiver {
 		boolean noConnectivity = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
 		boolean isFailover = intent.getBooleanExtra(ConnectivityManager.EXTRA_IS_FAILOVER, false);
 
-		Log.d(TAG, "onReceived() called; noConnectivity? " + noConnectivity + "; isFailover? " + isFailover);
+		Log.d(TAG, "onReceived() called; noConnectivity? " + noConnectivity + "; isFailover? " + isFailover + " " + Thread.currentThread());
 
 		if (noConnectivity && !isFailover && mIsConnected) {
 			mIsConnected = false;

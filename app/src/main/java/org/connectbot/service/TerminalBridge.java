@@ -41,6 +41,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.Typeface;
+import android.os.Looper;
 import android.text.ClipboardManager;
 import android.util.Log;
 import de.mud.terminal.VDUBuffer;
@@ -262,6 +263,13 @@ public class TerminalBridge implements VDUDisplay {
 	 * Spawn thread to open connection and start login process.
 	 */
 	protected boolean startConnection() {
+		Log.d(TAG, "TerminalBridge startConnection SPOT_K0000 " + Thread.currentThread());
+		if (Thread.currentThread() != Looper.getMainLooper().getThread()) {
+			// Found it, and now it has been renamed. Thread will now be named: SSH_TransportManager_FixName
+			Log.w(TAG, "WARNING here, possibly wrong thread SPOT_K0000 " + Thread.currentThread());
+			// throw new RuntimeException("Why this Thread");
+		}
+		Log.d(TAG, "TerminalBridge startConnection SPOT_K0000A " + Thread.currentThread());
 		transport = TransportFactory.getTransport(host.getProtocol());
 		transport.setBridge(this);
 		transport.setManager(manager);
@@ -284,7 +292,7 @@ public class TerminalBridge implements VDUDisplay {
 				outputLine(manager.res.getString(R.string.terminal_connecting, host.getHostname(), host.getPort(), host.getProtocol()));
 				Thread connectionThread = new Thread(new Runnable() {
 					public void run() {
-						android.util.Log.i(TAG, "connecting " + host.getHostname() + " on " + Thread.currentThread().toString());
+						android.util.Log.i(TAG, "connecting " + host.getHostname() + " on " + Thread.currentThread());
 						transport.connect();
 					}
 				});
@@ -299,6 +307,7 @@ public class TerminalBridge implements VDUDisplay {
 				return false;
 			case 2:
 				// Go immediately go into reconnect behavior
+				Log.i(TAG, "calling onDisconnected due to network availability. " + Thread.currentThread());
 				disconnectListener.onDisconnected(this);
 				return false;
 			default:
@@ -346,6 +355,12 @@ public class TerminalBridge implements VDUDisplay {
 					new IOException("outputLine call traceback"));
 		}
 
+		if (output == null)
+		{
+			// Yes, got a NullPointerException here
+			Log.e(TAG, "outputLine sent in null!");
+			return;
+		}
 		synchronized (localOutput) {
 			for (String line : output.split("\n")) {
 				if (line.length() > 0 && line.charAt(line.length() - 1) == '\r') {
@@ -465,6 +480,7 @@ public class TerminalBridge implements VDUDisplay {
 	 * Force disconnection of this terminal bridge.
 	 */
 	public void dispatchDisconnect(boolean immediate) {
+		Log.i(TAG, "dispatchDisconnect " + Thread.currentThread());
 		// We don't need to do this multiple times.
 		synchronized (this) {
 			if (disconnected && !immediate)
@@ -525,10 +541,12 @@ public class TerminalBridge implements VDUDisplay {
 				parent.post(new Runnable() {
 					@Override
 					public void run() {
+						Log.i(TAG, "onDisconnect being called, SPOT_Z0000 from " + Thread.currentThread());
 						disconnectListener.onDisconnected(TerminalBridge.this);
 					}
 				});
 			} else {
+				Log.i(TAG, "onDisconnect being called, SPOT_Z1000 from " + Thread.currentThread());
 				disconnectListener.onDisconnected(TerminalBridge.this);
 			}
 		}

@@ -483,7 +483,7 @@ public class TerminalKeyListener implements OnKeyListener, OnSharedPreferenceCha
 			try {
 				bridge.transport.flush();
 			} catch (IOException ioe) {
-				Log.d(TAG, "Our transport was closed, dispatching disconnect event");
+				Log.d(TAG, "Our transport was closed, dispatching disconnect event " + Thread.currentThread());
 				bridge.dispatchDisconnect(false);
 			}
 		} catch (NullPointerException npe) {
@@ -522,7 +522,7 @@ public class TerminalKeyListener implements OnKeyListener, OnSharedPreferenceCha
 			try {
 				bridge.transport.flush();
 			} catch (IOException ioe) {
-				Log.d(TAG, "Our transport was closed, dispatching disconnect event");
+				Log.d(TAG, "Our transport was closed, dispatching disconnect event " + Thread.currentThread());
 				bridge.dispatchDisconnect(false);
 			}
 		}

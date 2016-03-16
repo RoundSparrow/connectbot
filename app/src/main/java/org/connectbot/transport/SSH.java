@@ -483,8 +483,9 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 			}
 		} catch (IOException e) {
 			// Note: Testing reveals this is the place that will be reached if the device has no Internet access of any kind. For example, airplane mode.
-			Log.e(TAG, "Problem in SSH connection thread during authentication", e);
+			Log.e(TAG, "Problem in SSH connection thread during authentication " + Thread.currentThread(), e);
 
+			// BUG: https://github.com/connectbot/connectbot/issues/388
 			// Display the reason in the text.
 			Throwable t = e.getCause();
 			do {
@@ -501,7 +502,7 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 			// enter a loop to keep trying until authentication
 			int tries = 0;
 			while (connected && !connection.isAuthenticationComplete() && tries++ < AUTH_TRIES) {
-				Log.i(TAG, "authenticate try " + tries);
+				Log.i(TAG, "authenticate try " + tries + " " + Thread.currentThread());
 				authenticate();
 
 				// sleep to make sure we dont kill system
@@ -528,6 +529,7 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 	}
 
 	private void onDisconnect() {
+		Log.d(TAG, "SSH onDisconnect " + Thread.currentThread());
 		bridge.dispatchDisconnect(false);
 	}
 
@@ -559,6 +561,7 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 
 		if ((newConditions & ChannelCondition.EOF) != 0) {
 			close();
+			Log.i(TAG, "SSH SPOT_AD0000 onDisconnect calling " + Thread.currentThread());
 			onDisconnect();
 			throw new IOException("Remote end closed connection");
 		}
@@ -608,6 +611,13 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 	}
 
 	public void connectionLost(Throwable reason) {
+		// WARNING: com.trilead.ssh2.transport.TransportManager creates Thread without any name on it.
+		if (Thread.currentThread().getName().startsWith("Thread-"))
+		{
+			Log.w(TAG, "Hacking thread rename I just did, old name " + Thread.currentThread());
+			Thread.currentThread().setName("SSH_TransportManager_FixName");
+		}
+		Log.w(TAG, "SSH connectLost reason " + reason.getMessage() + " " + Thread.currentThread() + " name: " + Thread.currentThread().getName());
 		onDisconnect();
 	}
 
@@ -756,6 +766,7 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 
 			try {
 				dpf.close();
+				Log.d(TAG, "closed port forwarder " + portForward.getNickname());
 			} catch (IOException e) {
 				Log.e(TAG, "Could not stop dynamic port forwarder, setting enabled to false", e);
 				return false;
