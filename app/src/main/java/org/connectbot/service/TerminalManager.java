@@ -227,6 +227,7 @@ public class TerminalManager extends Service implements BridgeDisconnectedListen
 		TerminalBridge bridge = new TerminalBridge(this, host);
 		bridge.setOnDisconnectedListener(this);
 		Log.i(TAG, "TerminalBridge startConnection being called " + Thread.currentThread());
+		com.cameracornet.graftssh.ConnectLogHolder.addConnectLogEntry(10, bridge.host, reconnectAttemptCount);
 		bridge.startConnection();
 
 		synchronized (bridges) {
@@ -736,8 +737,8 @@ public class TerminalManager extends Service implements BridgeDisconnectedListen
 				reconnectAttemptCount++;
 				// ToDo: does this actually check that a previous attempt has timed out, finished - inProgress()? or does it count on just the clear() removing it from list?
 				Log.i(TAG, "TerminalManager reconnectPending calling startConnection " + Thread.currentThread() + " attempt: " + reconnectAttemptCount);
-				com.cameracornet.graftssh.ConnectLogHolder.addConnectLogEntry(100, bridge.host, reconnectAttemptCount);
-				bridge.startConnection();
+				com.cameracornet.graftssh.ConnectLogHolder.addConnectLogEntry(20, bridge.host, reconnectAttemptCount);
+				bridge.EnstartConnection();
 			}
 			// removing it from the list, what if it fails? Litearlly only one attempt?
 			// So Far, testing reveals it DOES stop attempting after connect. And retries are 4.7 seconds apart
