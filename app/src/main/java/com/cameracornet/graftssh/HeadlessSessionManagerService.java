@@ -122,6 +122,7 @@ public class HeadlessSessionManagerService extends Service implements OnHostStat
 					{
 						try {
 							android.util.Log.i(TAG, "updateList going to openConnection " + index + " " + singleHost.toString() + " " + Thread.currentThread());
+							ConnectLogHolder.addAutoConnectHostLaunch(20, singleHost);
 							bound.openConnection(singleHost.getUri());
 						} catch (Exception e) {
 							android.util.Log.e(TAG, "updateList openConnect Exception");

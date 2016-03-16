@@ -72,4 +72,12 @@ public class ConnectLogHolder {
 		}
 		LogKeeper.addLogEntry("ConnectivityFailure", failureCode + ", " +  outReasonForCode + "", LogKeeper.L_A_SHOW_A, LogKeeper.L_B_NORMAL);
 	}
+
+	public static void addAppStartupEntry(int entryCode) {
+		LogKeeper.addLogEntry("AppStartup", "bootup startService", LogKeeper.L_A_SHOW_A, LogKeeper.L_B_NORMAL);
+	}
+
+	public static void addAutoConnectHostLaunch(int entryCode, HostBean singleHost) {
+		LogKeeper.addLogEntry("AppStartup", "AutoConnect, " + hostSummaryA(singleHost), LogKeeper.L_A_NORMAL, LogKeeper.L_B_NORMAL);
+	}
 }

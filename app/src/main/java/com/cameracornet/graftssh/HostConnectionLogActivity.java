@@ -91,6 +91,10 @@ public class HostConnectionLogActivity extends AppCompatActivity {
 			textViewLogViewMain0.append("\n");
 		}
 
+		textViewLogViewMain0.append("first entry timestamp ");
+		textViewLogViewMain0.append(String.valueOf(LogKeeper.getTimestampBasis()));
+		textViewLogViewMain0.append("\n");
+
 		textViewLogViewMain0.append("test 1-2-3\n");
 
 		// toss an extra newline on for easier of reading

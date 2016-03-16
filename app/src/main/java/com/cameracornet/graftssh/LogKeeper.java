@@ -46,4 +46,8 @@ public class LogKeeper {
 	public static ArrayList<String> getLog() {
 		return logHolder;
 	}
+
+	public static long getTimestampBasis() {
+		return timeRefWhen;
+	}
 }

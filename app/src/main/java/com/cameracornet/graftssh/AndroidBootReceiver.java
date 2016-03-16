@@ -24,6 +24,7 @@ public class AndroidBootReceiver extends BroadcastReceiver {
 			// start the terminal manager service
 			android.util.Log.i("ABR", "Issuing startService CB.HeadlessSessionManagerService");
 			Intent startServiceIntention0 = new Intent(context.getApplicationContext(), HeadlessSessionManagerService.class);
+			ConnectLogHolder.addAppStartupEntry(10 /* Boot */);
 			context.startService(startServiceIntention0);
 		}
 	}
