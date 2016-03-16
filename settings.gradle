@@ -1,3 +1,4 @@
-include ':app',  ':sshlib'
+include ':app'
+include ':sshlib'
 
-project(':sshlib').projectDir           = new File('/', '/spot/CameraCornetGit0/misc0/sshPT/sshlib')
+project(':sshlib').projectDir           = new File('../sshlib/sshlib')

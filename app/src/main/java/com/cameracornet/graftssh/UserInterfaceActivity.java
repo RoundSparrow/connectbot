@@ -8,11 +8,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 
+import org.connectbot.ConsoleActivity;
 import org.connectbot.HostEditorFragment;
 import org.connectbot.HostListActivity;
+import org.connectbot.PortForwardListActivity;
 import org.connectbot.R;
+import org.connectbot.TerminalView;
 import org.connectbot.bean.HostBean;
 import org.connectbot.bean.PortForwardBean;
+import org.connectbot.service.TerminalBridge;
 import org.connectbot.util.HostDatabase;
 
 /**
@@ -126,17 +130,22 @@ public class UserInterfaceActivity {
 	}
 
 
-	public static boolean graftConsoleActivityMenuAddA(Menu menu, final HostDatabase hostdb)
+	public static boolean graftConsoleActivityMenuAddA(Menu menu, final ConsoleActivity.TerminalPagerAdapter adapter, final Activity consoleActivity)
 	{
 		MenuItem sessionLog = menu.add("Connect Log");
 		sessionLog.setIcon(android.R.drawable.ic_menu_compass);
 		sessionLog.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 			@Override
 			public boolean onMenuItemClick(MenuItem menuItem) {
-				// start the terminal manager service
+				TerminalView terminalView = adapter.getCurrentTerminalView();
+				TerminalBridge bridge = terminalView.bridge;
+
+				Intent intent = new Intent(consoleActivity, PortForwardListActivity.class);
+				intent.putExtra(Intent.EXTRA_TITLE, bridge.host.getId());
+				consoleActivity.startActivityForResult(intent, 1000);
+				return true;
 			}
 		});
-
 
 		return true;
 	}

@@ -901,7 +901,7 @@ public class ConsoleActivity extends AppCompatActivity implements BridgeDisconne
 			}
 		});
 
-		com.cameracornet.graftssh.UserInterfaceActivity.graftConsoleActivityMenuAddA(menu, bridge.host);
+		com.cameracornet.graftssh.UserInterfaceActivity.graftConsoleActivityMenuAddA(menu, adapter, this);
 
 		return true;
 	}
