@@ -197,6 +197,8 @@
 
 		<service android:name="com.cameracornet.graftssh.HeadlessSessionManagerService" />
 
+		<activity android:name="com.cameracornet.graftssh.HostConnectionLogActivity" />
+
 		<meta-data
 			android:name="com.google.android.backup.api_key"
 			android:value="AEdPqrEAAAAIDlFz9nSUr2g0gSytW0t2cNnYAGHDkptlVohsBA"/>

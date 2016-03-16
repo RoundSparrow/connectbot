@@ -72,6 +72,7 @@ public class ConnectivityReceiver extends BroadcastReceiver {
 		Log.d(TAG, "onReceived() called; noConnectivity? " + noConnectivity + "; isFailover? " + isFailover + " " + Thread.currentThread());
 
 		if (noConnectivity && !isFailover && mIsConnected) {
+			com.cameracornet.graftssh.ConnectLogHolder.addConnectivityReceiverChange(10 /* onConnectivityLost */);
 			mIsConnected = false;
 			mTerminalManager.onConnectivityLost();
 		} else if (!mIsConnected) {
@@ -79,6 +80,7 @@ public class ConnectivityReceiver extends BroadcastReceiver {
 					.get(ConnectivityManager.EXTRA_NETWORK_INFO);
 
 			if (mIsConnected = (info.getState() == State.CONNECTED)) {
+				com.cameracornet.graftssh.ConnectLogHolder.addConnectivityReceiverChange(20 /* onConnectivityRestored */);
 				mTerminalManager.onConnectivityRestored();
 			}
 		}

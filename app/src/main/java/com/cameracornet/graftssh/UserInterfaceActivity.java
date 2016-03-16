@@ -140,7 +140,7 @@ public class UserInterfaceActivity {
 				TerminalView terminalView = adapter.getCurrentTerminalView();
 				TerminalBridge bridge = terminalView.bridge;
 
-				Intent intent = new Intent(consoleActivity, PortForwardListActivity.class);
+				Intent intent = new Intent(consoleActivity, HostConnectionLogActivity.class);
 				intent.putExtra(Intent.EXTRA_TITLE, bridge.host.getId());
 				consoleActivity.startActivityForResult(intent, 1000);
 				return true;

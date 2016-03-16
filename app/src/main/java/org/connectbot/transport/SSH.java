@@ -253,10 +253,12 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 							com.cameracornet.graftssh.ExperimentsSpot.secureShellSessionPingWhen = System.currentTimeMillis();
 							com.cameracornet.graftssh.ExperimentsSpot.secureShellSessionPingIndex = onPingCount;
 						} catch (IOException e) {
+							com.cameracornet.graftssh.ConnectLogHolder.addConnectLogWorkingSessionNowFailing(10 /* Ping failure */, host);
 							Log.w(TAG, "SSH ping IOException " + onPingCount);
 						}
 					}
 				}
+				com.cameracornet.graftssh.ConnectLogHolder.addConnectLogWorkingSessionNowFailing(20 /* Ping reporting exit loop */, host);
 				Log.w(TAG,"SSH ping loop exited, count: " + onPingCount);
 			}
 		};
@@ -437,8 +439,10 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 			try {
 				Log.i(TAG, "creating portForward #" + forwardCount + ": " + portForward.getDescription());
 				enablePortForward(portForward);
+				com.cameracornet.graftssh.ConnectLogHolder.addForwardEntry(200 /* normal */, portForward);
 				bridge.outputLine(manager.res.getString(R.string.terminal_enable_portfoward, portForward.getDescription()));
 			} catch (Exception e) {
+				com.cameracornet.graftssh.ConnectLogHolder.addForwardEntry(100 /* failure */, portForward);
 				Log.e(TAG, "Error setting up port forward during connect", e);
 			}
 		}
@@ -604,6 +608,7 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 
 		if ((newConditions & ChannelCondition.EOF) != 0) {
 			close();
+			com.cameracornet.graftssh.ConnectLogHolder.addConnectLogWorkingSessionNowFailing(40 /* pre onDisconnect */, host);
 			Log.i(TAG, "SSH SPOT_AD0000 onDisconnect calling " + Thread.currentThread());
 			onDisconnect();
 			throw new IOException("Remote end closed connection");
