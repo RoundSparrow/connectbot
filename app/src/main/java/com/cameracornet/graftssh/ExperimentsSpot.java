@@ -5,4 +5,6 @@ package com.cameracornet.graftssh;
  */
 public class ExperimentsSpot {
 	public static boolean reconnectBehaviorNoClearA = true;
+	public static int secureShellSessionPingIndex = 0;
+	public static long secureShellSessionPingWhen = 0L;
 }

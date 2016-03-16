@@ -71,6 +71,7 @@ import com.trilead.ssh2.KnownHosts;
 import com.trilead.ssh2.LocalPortForwarder;
 import com.trilead.ssh2.Session;
 import com.trilead.ssh2.crypto.PEMDecoder;
+import com.trilead.ssh2.log.Logger;
 import com.trilead.ssh2.signature.DSASHA1Verify;
 import com.trilead.ssh2.signature.ECDSASHA2Verify;
 import com.trilead.ssh2.signature.RSASHA1Verify;
@@ -228,6 +229,41 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 		public void addServerHostKey(String host, int port, String algorithm, byte[] hostKey) {
 			manager.hostdb.saveKnownHost(host, port, algorithm, hostKey);
 		}
+	}
+
+	private void loopPingRunnable()
+	{
+		Thread sessionWorkerA = new Thread() {
+			@Override
+			public void run() {
+				int onPingCount = 0;
+				while (connected)
+				{
+					try {
+						Thread.sleep(15000L);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					if (connected)
+					{
+						try {
+							onPingCount++;
+							Log.v(TAG, "SSH ping " + onPingCount);
+							session.ping();
+							com.cameracornet.graftssh.ExperimentsSpot.secureShellSessionPingWhen = System.currentTimeMillis();
+							com.cameracornet.graftssh.ExperimentsSpot.secureShellSessionPingIndex = onPingCount;
+						} catch (IOException e) {
+							Log.w(TAG, "SSH ping IOException " + onPingCount);
+						}
+					}
+				}
+				Log.w(TAG,"SSH ping loop exited, count: " + onPingCount);
+			}
+		};
+
+		sessionWorkerA.setName("SSH_Session_WorkerA");
+		sessionWorkerA.setDaemon(true);
+		sessionWorkerA.start();
 	}
 
 	private void authenticate() {
@@ -407,6 +443,8 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 			}
 		}
 
+		Log.d(TAG, "after forwards");
+
 		if (!host.getWantSession()) {
 			bridge.outputLine(manager.res.getString(R.string.terminal_no_session));
 			bridge.onConnected();
@@ -427,6 +465,11 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 			stderr = session.getStderr();
 
 			sessionOpen = true;
+
+			Log.i(TAG, "sessionOpen doing first ping()");
+			session.ping();
+			Logger.enabled = true;
+			loopPingRunnable();
 
 			bridge.onConnected();
 		} catch (IOException e1) {
@@ -498,9 +541,9 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 			return;
 		}
 
+		int tries = 0;
 		try {
 			// enter a loop to keep trying until authentication
-			int tries = 0;
 			while (connected && !connection.isAuthenticationComplete() && tries++ < AUTH_TRIES) {
 				Log.i(TAG, "authenticate try " + tries + " " + Thread.currentThread());
 				authenticate();
@@ -509,7 +552,7 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 				Thread.sleep(AUTH_RETRY_DELAY);
 			}
 		} catch (Exception e) {
-			Log.e(TAG, "Problem in SSH connection thread during authentication", e);
+			Log.e(TAG, "Problem in SSH connection thread during authentication. tries " + tries, e);
 		}
 	}
 

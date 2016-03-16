@@ -718,6 +718,8 @@ public class TerminalManager extends Service implements BridgeDisconnectedListen
 		}
 	}
 
+	private int reconnectAttemptCount = 0;
+
 	/**
 	 * Reconnect all bridges that were pending a reconnect when connectivity
 	 * was lost.
@@ -730,10 +732,18 @@ public class TerminalManager extends Service implements BridgeDisconnectedListen
 				if (bridge == null) {
 					continue;
 				}
-				Log.i(TAG, "TerminalManager reconnectPending calling startConnection " + Thread.currentThread());
+				reconnectAttemptCount++;
+				// ToDo: does this actually check that a previous attempt has timed out, finished - inProgress()? or does it count on just the clear() removing it from list?
+				Log.i(TAG, "TerminalManager reconnectPending calling startConnection " + Thread.currentThread() + " attempt: " + reconnectAttemptCount);
 				bridge.startConnection();
 			}
-			mPendingReconnect.clear();
+			// removing it from the list, what if it fails? Litearlly only one attempt?
+			// So Far, testing reveals it DOES stop attempting after connect. And retries are 4.7 seconds apart
+			if (! com.cameracornet.graftssh.ExperimentsSpot.reconnectBehaviorNoClearA) {
+				// For now, let's assume this causes connect even when connected, overlapping connections
+				mPendingReconnect.clear();
+				android.util.Log.i(TAG, "reconnectPending list cleared");
+			}
 		}
 	}
 

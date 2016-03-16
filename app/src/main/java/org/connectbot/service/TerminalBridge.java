@@ -970,7 +970,12 @@ public class TerminalBridge implements VDUDisplay {
 			return false;
 		}
 
-		return transport.enablePortForward(portForward);
+		boolean goodForward = transport.enablePortForward(portForward);
+		if (! goodForward)
+		{
+			Log.w(TAG, "Port forward failed " + portForward.getNickname());
+		}
+		return goodForward;
 	}
 
 	/**
